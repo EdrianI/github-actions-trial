@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set environment variables
-        if: ${{ github.release == 'created' }}
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           VCAP_LOCAL: ${{ secrets.VCAP_LOCAL }}
           REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
