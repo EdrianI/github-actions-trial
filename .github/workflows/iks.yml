@@ -15,8 +15,6 @@ jobs:
   build-push-deploy-job:
     runs-on: ubuntu-latest
     name: A job to download and log into ibmcloud cli
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-
     steps:
       - uses: actions/checkout@v2
       - name: Set environment variables for a release
