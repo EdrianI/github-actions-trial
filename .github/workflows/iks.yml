@@ -6,7 +6,7 @@ name: Build and Deploy to IKS
 on:
   push:
     branches:
-      - master
+      - release-action
   release:
     types: # This configuration does not affect the page_build event above
       - created
@@ -26,7 +26,7 @@ jobs:
           echo "$VCAP_LOCAL" >> ./web/api/vcap-local.json
           echo REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
         
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release-action' }}
         env:
           VCAP_LOCAL2: ${{ secrets.VCAP_LOCAL }}
           REACT_APP_MAPBOX_ACCESS_TOKEN2: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
