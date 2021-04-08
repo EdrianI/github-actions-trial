@@ -15,9 +15,11 @@ jobs:
   build-push-deploy-job:
     runs-on: ubuntu-latest
     name: A job to download and log into ibmcloud cli
+    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+
     steps:
       - uses: actions/checkout@v2
-      - name: Set environment variables
+      - name: Set environment variables for a release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           VCAP_LOCAL: ${{ secrets.VCAP_LOCAL }}
@@ -25,7 +27,8 @@ jobs:
         run: |
           echo "$VCAP_LOCAL" >> ./web/api/vcap-local.json
           echo REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
-        
+          
+      - name: Set enviroment variables for a push to master
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release-action' }}
         env:
           VCAP_LOCAL2: ${{ secrets.VCAP_LOCAL }}
