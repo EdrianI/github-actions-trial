@@ -29,7 +29,7 @@ jobs:
           echo REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
           
       - name: Set enviroment variables for a push to master
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release-action' }}
+        if: ${{ github.event_name == 'push' }}
         env:
           VCAP_LOCAL2: ${{ secrets.VCAP_LOCAL }}
           REACT_APP_MAPBOX_ACCESS_TOKEN2: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
