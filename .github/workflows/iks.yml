@@ -17,20 +17,37 @@ jobs:
     name: A job to download and log into ibmcloud cli
     steps:
       - uses: actions/checkout@v2
-      - name: Set environment variables for a release
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+      - name: Set general enviroment variables
         env:
           VCAP_LOCAL: ${{ secrets.VCAP_LOCAL }}
           REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
+          DEPLOYMENT_NAME: openeew-dashboard
         run: |
           echo "$VCAP_LOCAL" >> ./web/api/vcap-local.json
           echo REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
+      
+      # If this action is triggered by a release, we will deploy to the production site
+      - name: Set environment variables for a release
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        env: 
+          DEPLOYMENT_NAME: openeew-dashboard
           
-      - name: Set enviroment variables for a push to master
-        if: ${{ github.event_name == 'push' }}
+      # Turnstyle ensures that this job only runs one at a time in this repository
+      - name: Turnstyle
+        uses: softprops/turnstyle@v1
         env:
-          VCAP_LOCAL2: ${{ secrets.VCAP_LOCAL }}
-          REACT_APP_MAPBOX_ACCESS_TOKEN2: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
-        run: |
-          echo "$VCAP_LOCAL2" >> ./web/api/vcap-local.json
-          echo REACT_APP_MAPBOX_ACCESS_TOKEN2=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: call-for-code/build-push-deploy@v1
+        with:
+          cloud-api-key: ${{ secrets.IBM_CLOUD_API_KEY }}
+          cloud-resource-group: OpenEEW-Infra
+          cloud-region: us-south
+          deployment-name: ${{ DEPLOYMENT_NAME }}
+          github-sha: ${{ github.sha }}
+          icr-namespace: ${{ secrets.ICR_NAMESPACE }}
+          image-name: dashboard-gha
+          k8s-cluster-name: ${{ secrets.K8S_CLUSTER_NAME }}
+          k8s-cluster-namespace: ${{ secrets.K8S_CLUSTER_NAMESPACE }}
+          registry-hostname: us.icr.io
+          working-directory: "web/"
