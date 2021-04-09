@@ -44,7 +44,7 @@ jobs:
           cloud-api-key: abc
           cloud-resource-group: OpenEEW-Infra
           cloud-region: us-south
-          deployment-name: ${{ DEPLOYMENT_NAME }}
+          deployment-name: '$DEPLOYMENT_NAME'
           github-sha: ${{ github.sha }}
           icr-namespace: ${{ secrets.ICR_NAMESPACE }}
           image-name: dashboard-gha
