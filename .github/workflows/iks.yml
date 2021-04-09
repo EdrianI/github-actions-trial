@@ -10,7 +10,11 @@ on:
   release:
     types: # This configuration does not affect the page_build event above
       - created
-      
+env:
+  VCAP_LOCAL: ${{ secrets.VCAP_LOCAL }}
+  REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
+  DEPLOYMENT_NAME: openeew-dashboard
+
 jobs:
   build-push-deploy-job:
     runs-on: ubuntu-latest
@@ -18,10 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set general enviroment variables
-        env:
-          VCAP_LOCAL: ${{ secrets.VCAP_LOCAL }}
-          REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
-          DEPLOYMENT_NAME: openeew-dashboard
         run: |
           echo "$VCAP_LOCAL" >> ./web/api/vcap-local.json
           echo REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN >> ./web/client/.env.local
@@ -30,7 +30,7 @@ jobs:
       - name: Set environment variables for a release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env: 
-          DEPLOYMENT_NAME: openeew-dashboard
+          DEPLOYMENT_NAME: openeew-dashboard-production
         run: echo "Set production deployment name"
           
       # Turnstyle ensures that this job only runs one at a time in this repository
