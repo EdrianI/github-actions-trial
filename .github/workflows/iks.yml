@@ -41,7 +41,7 @@ jobs:
 
       - uses: call-for-code/build-push-deploy@v1
         with:
-          cloud-api-key: ${{ secrets.IBM_CLOUD_API_KEY }}
+          cloud-api-key: abc
           cloud-resource-group: OpenEEW-Infra
           cloud-region: us-south
           deployment-name: ${{ env.DEPLOYMENT_NAME }}
